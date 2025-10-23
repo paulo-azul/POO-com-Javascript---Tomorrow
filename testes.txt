@@ -1,0 +1,345 @@
+
+console.log("--- INÍCIO DOS TESTES ---");
+
+// --- Configuração Inicial ---
+const blog = new Blog();
+
+console.log("\n--- TESTES: Classe 'Blog' (cadastro e login) ---");
+console.log("Teste 1.1 (Sucesso): Cadastrar usuários válidos");
+blog.cadastra_usuario("Ana", "senha123");     // ID 0
+blog.cadastra_usuario("Beto", "senha456");    // ID 1
+blog.cadastra_usuario("Carla", "senha789");   // ID 2
+
+console.log("\nTeste 1.2 (Erro): Cadastrar usuário com dados nulos");
+blog.cadastra_usuario(null, "senha");
+blog.cadastra_usuario("Usuário Fantasma", null);
+
+console.log("\nTeste 1.3 (Erro): Cadastrar usuário com tipos errados");
+blog.cadastra_usuario(123, "senha");
+blog.cadastra_usuario("Usuário 123", 123);
+
+console.log("\nTeste 1.4 (Sucesso): Login e Logoff");
+blog.login(0, "senha123"); // Ana Loga
+
+console.log("\nTeste 1.5 (Sucesso): Fazer Logoff");
+blog.login(0, "senha123"); // Ana Desloga
+
+console.log("\nTeste 1.6 (Falha): Login com senha errada");
+blog.login(1, "senhaErrada"); // Beto erra a senha
+
+console.log("\nTeste 1.7 (Erro): Login com ID inexistente");
+blog.login(99, "senha123");
+
+console.log("\nTeste 1.8 (Erro): Login com dados nulos/inválidos");
+blog.login(null, "senha123");
+blog.login(1, null);
+blog.login("1", 123);
+
+// --- TESTES: Classe 'Blog' (Posts) ---
+console.log("\n--- TESTES: Classe 'Blog' (publicar_post) ---");
+console.log("Teste 2.1 (Sucesso): Publicar post");
+blog.login(0, "senha123"); // Ana loga para postar
+blog.publicar_post("Meu primeiro post", "Este é o texto...", 0); // Post ID 0
+blog.login(1, "senha456"); // Beto loga
+blog.publicar_post("Postagem do Beto", "Texto do Beto", 1);    // Post ID 1
+
+console.log("\nTeste 2.2 (Erro): Publicar post com dados nulos");
+blog.publicar_post(null, "Texto", 0);
+blog.publicar_post("Título", null, 0);
+blog.publicar_post("Título", "Texto", null);
+
+console.log("\nTeste 2.3 (Erro): Publicar post com tipos errados");
+blog.publicar_post(123, "Texto", 0);
+blog.publicar_post("Título", 123, 0);
+blog.publicar_post("Título", "Texto", "0");
+
+console.log("\nTeste 2.4 (Erro): Publicar post com ID de usuário inexistente");
+blog.publicar_post("Post Fantasma", "...", 99);
+
+
+// --- TESTES: Classe 'Blog' (comentar_post) ---
+console.log("\n--- TESTES: Classe 'Blog' (comentar_post) ---");
+console.log("Teste 3.1 (Sucesso): Comentar em post");
+// Beto (ID 1) está logado e comenta no post de Ana (Post ID 0)
+blog.comentar_post("Que post legal, Ana!", 1, 0); // Comentário ID 0
+
+console.log("\nTeste 3.2 (Falha): Comentar deslogado");
+blog.login(2, "senha789"); // Carla loga
+blog.login(2, "senha789"); // Carla desloga
+blog.comentar_post("Queria comentar...", 2, 0);
+
+console.log("\nTeste 3.3 (Erro): Comentar em post inexistente");
+blog.comentar_post("Comentário no nada", 1, 99);
+
+console.log("\nTeste 3.4 (Erro): Comentar com usuário inexistente");
+blog.comentar_post("Comentário fantasma", 99, 0);
+
+console.log("\nTeste 3.5 (Erro): Comentar com dados nulos/inválidos");
+blog.comentar_post(null, 1, 0);
+blog.comentar_post("Texto", null, 0);
+blog.comentar_post("Texto", 1, null);
+blog.comentar_post(123, "1", "0");
+
+
+// --- TESTES: Classe 'Blog' (editar_post) ---
+console.log("\n--- TESTES: Classe 'Blog' (editar_post) ---");
+console.log("Teste 4.1 (Sucesso): Autor editar o próprio post");
+// Ana (ID 0) está logada
+blog.editar_post("Meu primeiro post (Editado)", "Texto editado", 0, 0);
+
+console.log("\nTeste 4.2 (Falha): Usuário tentar editar post de outro");
+// Beto (ID 1) tenta editar post de Ana (ID 0)
+blog.editar_post("Post Hackeado", "...", 1, 0);
+
+console.log("\nTeste 4.3 (Falha): Autor tentar editar deslogado");
+blog.login(0, "senha123"); // Ana desloga
+blog.editar_post("Editando deslogada", "...", 0, 0);
+
+console.log("\nTeste 4.4 (Erro): Editar post inexistente");
+blog.login(0, "senha123"); // Ana loga
+blog.editar_post("Título", "Texto", 0, 99);
+
+console.log("\nTeste 4.5 (Erro): Editar com usuário inexistente");
+blog.editar_post("Título", "Texto", 99, 0);
+
+console.log("\nTeste 4.6 (Erro): Editar com dados nulos/inválidos");
+// Note que seu código original tem bugs aqui (& e ||)
+// Estes testes podem não funcionar como esperado sem as correções
+blog.editar_post(null, "Texto", 0, 0); // Deveria funcionar (editar só o texto)
+blog.editar_post("Título", null, 0, 0); // Deveria funcionar (editar só o título)
+blog.editar_post("Título", "Texto", null, 0);
+blog.editar_post("Título", "Texto", 0, null);
+blog.editar_post(123, 456, "0", "0");
+
+
+// --- TESTES: Classe 'Blog' (Curtidas) ---
+console.log("\n--- TESTES: Classe 'Blog' (curtir_post e curtir_comentario) ---");
+console.log("Teste 5.1 (Sucesso): Curtir post");
+blog.curtir_post(0); // Post 0, 1 curtida
+blog.curtir_post(0); // Post 0, 2 curtidas
+
+console.log("\nTeste 5.2 (Erro): Curtir post inexistente");
+blog.curtir_post(99);
+
+console.log("\nTeste 5.3 (Erro): Curtir post com ID nulo/inválido");
+blog.curtir_post(null);
+blog.curtir_post("0");
+
+console.log("\nTeste 5.4 (Sucesso): Curtir comentário");
+blog.curtir_comentario(0, 0); // Curtir comentário 0 do post 0
+
+console.log("\nTeste 5.5 (Erro): Curtir comentário inexistente");
+blog.curtir_comentario(99, 0); // Comentário 99 no post 0
+
+console.log("\nTeste 5.6 (Erro): Curtir comentário em post inexistente");
+blog.curtir_comentario(0, 99); // Comentário 0 no post 99
+
+console.log("\nTeste 5.7 (Erro): Curtir comentário com dados nulos/inválidos");
+blog.curtir_comentario(null, 0);
+blog.curtir_comentario(0, null);
+blog.curtir_comentario("0", "0");
+
+
+// --- TESTES: Classe 'Blog' (Seguidores) ---
+console.log("\n--- TESTES: Classe 'Blog' (follow, unfollow, count) ---");
+console.log("Teste 6.1 (Sucesso): Seguir usuário");
+blog.follow_user(0, 1); // Beto (1) segue Ana (0)
+blog.follow_user(0, 2); // Carla (2) segue Ana (0)
+
+console.log("\nTeste 6.2 (Falha): Tentar seguir quem já segue");
+blog.follow_user(0, 1); // Beto (1) tenta seguir Ana (0) de novo
+
+console.log("\nTeste 6.3 (Sucesso): Contar seguidores");
+blog.follower_count(0); // Ana deve ter 2 seguidores
+
+console.log("\nTeste 6.4 (Sucesso): Deixar de seguir");
+blog.unfollow_user(0, 1); // Beto (1) deixa de seguir Ana (0)
+
+console.log("\nTeste 6.5 (Falha): Tentar deixar de seguir quem não segue");
+blog.unfollow_user(0, 1); // Beto (1) tenta deixar de seguir de novo
+
+console.log("\nTeste 6.6 (Sucesso): Contar seguidores (após unfollow)");
+blog.follower_count(0); // Ana deve ter 1 seguidor
+
+console.log("\nTeste 6.7 (Erro): Funções de seguir com dados nulos/inválidos");
+blog.follow_user(null, 1);
+blog.follow_user(0, null);
+blog.follow_user("0", "1");
+blog.unfollow_user(null, 1);
+blog.unfollow_user(0, null);
+blog.follower_count(null);
+blog.follower_count("0");
+
+console.log("\nTeste 6.8 (Erro): Funções de seguir com IDs inexistentes");
+blog.follow_user(99, 0);
+blog.follow_user(0, 99);
+blog.unfollow_user(99, 0);
+blog.unfollow_user(0, 99);
+blog.follower_count(99);
+
+
+// --- TESTES: Classes 'Usuario', 'Caixa_Texto', 'Post', 'Comment' (Setters) ---
+console.log("\n--- TESTES: Métodos Setters (validação de tipo/null) ---");
+
+// Pegar objetos reais para testar
+const usuarioAna = blog.getUsuarios()[0];
+const postAna = blog.getPosts()[0];
+const comentarioBeto = postAna.getComentarios()[0];
+
+console.log("Testes 'Usuario' (setLoginState, setNomeUsuario, MudarSenha):");
+usuarioAna.setLoginState(null);
+usuarioAna.setLoginState("true");
+usuarioAna.setNomeUsuario(null);
+usuarioAna.setNomeUsuario(123);
+usuarioAna.MudarSenha(null, "nova");
+usuarioAna.MudarSenha("senha123", null);
+usuarioAna.MudarSenha(123, 456);
+
+console.log("\nTestes 'Caixa_Texto' (via Post) (setTexto, setAutor, setCurtidas, setData):");
+postAna.setTexto(null);
+postAna.setTexto(12345);
+postAna.setAutor(null);
+postAna.setAutor("0");
+postAna.setCurtidas(null);
+postAna.setCurtidas("10");
+postAna.setCurtidas(-5); // Teste de < 0
+postAna.setData(null);
+postAna.setData(2025);
+
+console.log("\nTestes 'Post' (setTitulo, setComentarios):");
+postAna.setTitulo(null);
+postAna.setTitulo(123);
+postAna.setComentarios(null);
+postAna.setComentarios("não é array");
+
+console.log("\nTestes 'Caixa_Texto' (via Comment):");
+comentarioBeto.setTexto(null);
+comentarioBeto.setCurtidas(-1);
+
+// --- TESTES: Métodos 'toString()' ---
+console.log("\n--- TESTES: Métodos toString() ---");
+console.log("toString() Usuario (Ana):");
+console.log(usuarioAna.toString());
+console.log("\ntoString() Comment (Beto):");
+console.log(comentarioBeto.toString());
+console.log("\ntoString() Post (Ana):");
+console.log(postAna.toString());
+console.log("\ntoString() Blog (Final):");
+console.log(blog.toString());
+
+// --- CONFIGURAÇÃO PARA TESTES DE SETTERS (SUCESSO) ---
+console.log("--- INÍCIO DOS TESTES DE SETTERS (SUCESSO) ---");
+
+// Criar instâncias novas para garantir um estado limpo
+const blogTesteSetters = new Blog();
+blogTesteSetters.cadastra_usuario("Usuario Original", "senha_antiga"); // ID 0
+blogTesteSetters.cadastra_usuario("Outro Usuario", "senha123");  // ID 1
+blogTesteSetters.publicar_post("Título Original", "Texto Original", 0); // Post ID 0
+blogTesteSetters.login(0, "senha_antiga");
+blogTesteSetters.comentar_post("Comentário Original", 0, 0); // Comentário ID 0
+
+// Obter os objetos para teste
+const usuarioTeste = blogTesteSetters.getUsuarios()[0];
+const postTeste = blogTesteSetters.getPosts()[0];
+const comentarioTeste = postTeste.getComentarios()[0];
+
+console.log("\n--- Estado Inicial dos Objetos ---");
+console.log("Usuário:", usuarioTeste.toString());
+console.log("Post:", postTeste.toString());
+console.log("Comentário:", comentarioTeste.toString());
+console.log("---------------------------------");
+
+
+// --- Testes de Sucesso para Setters da Classe 'Usuario' ---
+console.log("\n--- TESTES 'Usuario' ---");
+
+console.log("Teste setNomeUsuario (Sucesso):");
+console.log(`Nome Antigo: ${usuarioTeste.getNomeUsuario()}`);
+// Corrigindo a definição duplicada em seu código, usará a segunda (correta)
+usuarioTeste.setNomeUsuario("Nome Modificado"); 
+console.log(`Nome Novo: ${usuarioTeste.getNomeUsuario()}`);
+
+console.log("\nTeste setLoginState (Sucesso):");
+console.log(`Login Antigo: ${usuarioTeste.getLoginState()}`); // Estará 'false' após o setup
+usuarioTeste.setLoginState(true);
+console.log(`Login Novo (true): ${usuarioTeste.getLoginState()}`);
+usuarioTeste.setLoginState(false);
+console.log(`Login Novo (false): ${usuarioTeste.getLoginState()}`);
+
+console.log("\nTeste MudarSenha (Sucesso):");
+// Este método loga no console, não retorna valor
+usuarioTeste.MudarSenha("senha_antiga", "senha_nova_123");
+console.log("Tentando logar com a senha nova:");
+blogTesteSetters.login(0, "senha_nova_123"); // Deve logar
+console.log("Estado do login:", usuarioTeste.getLoginState()); // Deve ser true
+blogTesteSetters.login(0, "senha_nova_123"); // Deslogar para o próximo teste
+console.log("Estado do login (após deslogar):", usuarioTeste.getLoginState()); // Deve ser false
+
+console.log("---------------------------------");
+
+
+// --- Testes de Sucesso para Setters da Classe 'Caixa_Texto' ---
+console.log("\n--- TESTES 'Caixa_Texto' (via Post e Comment) ---");
+
+console.log("Teste setTexto (no Post):");
+console.log(`Texto Antigo: ${postTeste.getTexto().substring(0, 20)}...`);
+postTeste.setTexto("Este é o novo texto completo do post.");
+console.log(`Texto Novo: ${postTeste.getTexto()}`);
+
+console.log("\nTeste setAutor (no Post):");
+console.log(`Autor Antigo (ID): ${postTeste.getAutor()}`);
+postTeste.setAutor(1); // Mudando para o "Outro Usuario" (ID 1)
+console.log(`Autor Novo (ID): ${postTeste.getAutor()}`);
+
+console.log("\nTeste setCurtidas (no Post):");
+console.log(`Curtidas Antigas: ${postTeste.getCurtidas()}`);
+postTeste.setCurtidas(25);
+console.log(`Curtidas Novas: ${postTeste.getCurtidas()}`);
+
+console.log("\nTeste setData (no Post):");
+console.log(`Data Antiga: ${postTeste.getData()}`);
+const novaData = new Date("2025-01-01T12:00:00Z").toUTCString();
+postTeste.setData(novaData);
+console.log(`Data Nova: ${postTeste.getData()}`);
+
+console.log("\nTeste setTexto (no Comentário):");
+console.log(`Texto Antigo: ${comentarioTeste.getTexto()}`);
+comentarioTeste.setTexto("Este comentário foi atualizado.");
+console.log(`Texto Novo: ${comentarioTeste.getTexto()}`);
+
+console.log("\nTeste setCurtidas (no Comentário):");
+console.log(`Curtidas Antigas: ${comentarioTeste.getCurtidas()}`);
+comentarioTeste.setCurtidas(10);
+console.log(`Curtidas Novas: ${comentarioTeste.getCurtidas()}`);
+
+console.log("---------------------------------");
+
+
+// --- Testes de Sucesso para Setters da Classe 'Post' ---
+console.log("\n--- TESTES 'Post' (específicos) ---");
+
+console.log("Teste setTitulo (Sucesso):");
+console.log(`Título Antigo: ${postTeste.getTitulo()}`);
+postTeste.setTitulo("TÍTULO TOTALMENTE NOVO");
+console.log(`Título Novo: ${postTeste.getTitulo()}`);
+
+console.log("\nTeste setComentarios (Sucesso):");
+console.log(`Nº Comentários Antigo: ${postTeste.getComentarios().length}`);
+// Criamos um novo comentário (apenas para o teste, não via 'blog')
+const novoComentario = new Comment("Comentário de teste", 1);
+postTeste.setComentarios([novoComentario, novoComentario]); // Define uma nova lista
+console.log(`Nº Comentários Novo: ${postTeste.getComentarios().length}`);
+console.log(`Novo array: ${postTeste.getComentarios().toString()}`); // Usa o toString()
+postTeste.setComentarios([]); // Define como array vazio
+console.log(`Nº Comentários (vazio): ${postTeste.getComentarios().length}`);
+
+console.log("---------------------------------");
+
+
+console.log("\n--- Estado Final dos Objetos (Após Setters) ---");
+console.log("Usuário Final:", usuarioTeste.toString());
+console.log("Post Final:", postTeste.toString());
+
+console.log("\n--- FIM DOS TESTES DE SETTERS (SUCESSO) ---");
+
+console.log("\n--- FIM DOS TESTES ---");
